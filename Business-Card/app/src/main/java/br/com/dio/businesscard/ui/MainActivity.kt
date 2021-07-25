@@ -12,7 +12,8 @@ import br.com.dio.businesscard.util.Image
 
 class MainActivity : AppCompatActivity() {
 
-    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
+    private val binding by lazy {ActivityMainBinding.inflate(layoutInflater) }
     private val mainViewModel: MainViewModel by viewModels {
         MainViewModelFactory((application as App).repository)
     }
