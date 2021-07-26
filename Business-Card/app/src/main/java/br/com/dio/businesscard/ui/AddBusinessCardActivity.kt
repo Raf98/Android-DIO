@@ -79,14 +79,16 @@ class AddBusinessCardActivity : AppCompatActivity() {
                 empresa = binding.tilEmpresa.editText?.text.toString(),
                 telefone = binding.tilTelefone.editText?.text.toString(),
                 email = binding.tilEmail.editText?.text.toString(),
-                fundoPersonalizado = binding.tilCor.editText?.text.toString()
+                fundoPersonalizado = binding.tilCor.editText?.text.toString().uppercase()
             )
 
             var errorsStr: String = checkInvalidInputs(businessCard)
 
             if (errorsStr == " ") {
-                businessCard.fundoPersonalizado =
-                    ptToEnColorsMap[businessCard.fundoPersonalizado].toString()
+                if (!businessCard.fundoPersonalizado.contains("#")) {
+                    businessCard.fundoPersonalizado =
+                        ptToEnColorsMap[businessCard.fundoPersonalizado.lowercase()].toString()
+                }
                 mainViewModel.insert(businessCard)
                 Toast.makeText(this, R.string.label_show_success, Toast.LENGTH_SHORT).show()
                 finish()
@@ -123,12 +125,20 @@ class AddBusinessCardActivity : AppCompatActivity() {
 
     private fun checkInvalidInputs(businessCard: BusinessCard): String {
         val errorsBuilder = StringBuilder(" ")
+        val regexExpressionBuilder = StringBuilder("#")
+        for (i in 1..6) {
+            regexExpressionBuilder.append("[\\dABCDEF]")
+        }
+        val colorRegex = Regex(regexExpressionBuilder.toString())
 
         if (businessCard.nome == "") errorsBuilder.append("nome vazio, ")
         if (businessCard.telefone == "") errorsBuilder.append("telefone vazio, ")
         if (businessCard.email == "") errorsBuilder.append("e-mail vazio, ")
         if (businessCard.empresa == "") errorsBuilder.append("empresa vazia, ")
-        if (!ptColorsList.contains(businessCard.fundoPersonalizado)) errorsBuilder.append("cor inválida, ")
+        if (!(ptColorsList.contains(businessCard.fundoPersonalizado.lowercase()) ||
+                    businessCard.fundoPersonalizado.matches(colorRegex))
+        )
+            errorsBuilder.append("cor inválida, ")
 
         return errorsBuilder.toString()
     }
