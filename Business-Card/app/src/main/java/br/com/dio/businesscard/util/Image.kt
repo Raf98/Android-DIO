@@ -12,6 +12,8 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.core.content.FileProvider
+import br.com.dio.businesscard.BuildConfig
 import br.com.dio.businesscard.R
 import java.io.File
 import java.io.FileOutputStream
@@ -68,7 +70,9 @@ class Image {
                 // These for devices running on android < Q
                 val imagesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
                 val image = File(imagesDir, filename)
-                shareIntent(context, Uri.fromFile(image))
+                val imageUri = FileProvider.getUriForFile(context, context.applicationContext.packageName + ".provider", image)
+                //shareIntent(context, Uri.fromFile(image))
+                shareIntent(context, imageUri)
                 fos = FileOutputStream(image)
             }
 
@@ -84,6 +88,7 @@ class Image {
                 putExtra(Intent.EXTRA_STREAM, image)
                 type = "image/jpeg"
             }
+
             context.startActivity(
                 Intent.createChooser(
                     shareIntent,
